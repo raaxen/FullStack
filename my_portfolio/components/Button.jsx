@@ -1,6 +1,6 @@
 import React from 'react'
 import {View, Text, styles} from 'react-native'
-
+import { StyleSheet } from 'react-native'
 const Button = () => {
   return (
     <View style={styles.button}>
@@ -9,7 +9,7 @@ const Button = () => {
   )
 }
 
-styles = {
+const style = StyleSheet.create({
   button: {
     backgroundColor: '#007BFF',
     paddingVertical: 10,
@@ -22,4 +22,6 @@ styles = {
     fontWeight: 'bold',
   }
 }
+)
+
 export default Button
