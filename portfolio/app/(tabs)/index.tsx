@@ -1,31 +1,22 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react';
+import {View, Text, StyleSheet } from 'react-native';
+import { Image } from 'react-native';
 
-import { Link } from 'expo-router';
+import Avatar from '@/assets/images/avatar.png';
 
-export default function HomeScreen() {
+const index = () => {
   return (
-   <>
-   
-   </> 
-  );
+    <View className = "Container">
+      <View className='Container-image'>
+        <Image source={Avatar} />
+      </View>
+      <View className='Container-text'>
+        <Text>
+          
+        </Text>
+      </View>
+    </View>
+  )
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+export default index

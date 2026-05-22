@@ -1,13 +1,9 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react'
 
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
-
-export default function TabTwoScreen() {
+const explore = () => {
   return (
-    <>
-
-    </>
-  );
+    <div>explore</div>
+  )
 }
+
+export default explore
