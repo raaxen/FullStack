@@ -13,6 +13,13 @@ export default function TabLayout() {
           title: 'Accueil',
           headerShown: false,
         }}
+      /> 
+      <Tabs.Screen
+        name="Home"
+        options={{
+          title: 'Portfolio',
+          headerShown: false,
+        }}
       />
     </Tabs>
   );

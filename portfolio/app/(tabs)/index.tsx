@@ -2,10 +2,13 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, Linking } from 'react-native'; 
 import Avatar from '@/assets/images/avatar.png';
 import { Ionicons } from '@expo/vector-icons';
+import {useRouter} from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
 const Index = () => {
+  const router = useRouter();
+
   return (
     <View style={styles.body}>
       <View style={styles.container}>
@@ -32,7 +35,7 @@ const Index = () => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/home")}>
             <Text style={styles.buttonText}>See my Portfolio</Text>
           </TouchableOpacity>
         </View>
