@@ -1,93 +1,234 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, Linking } from 'react-native'; 
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, Animated } from 'react-native';
 import Avatar from '@/assets/images/avatar.png';
 import { Ionicons } from '@expo/vector-icons';
-import {useRouter} from 'expo-router';
+import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
+
+const ACCENT = '#60a5fa';
+const BG     = '#0f172a';
 
 const Index = () => {
   const router = useRouter();
 
+  const fadeAnim    = useRef(new Animated.Value(0)).current;
+  const slideAnim   = useRef(new Animated.Value(60)).current;
+  const avatarScale = useRef(new Animated.Value(0.5)).current;
+  const glowAnim    = useRef(new Animated.Value(0.4)).current;
+  const buttonAnim  = useRef(new Animated.Value(0)).current;
+  const buttonScale = useRef(new Animated.Value(1)).current;
+
+  const iconAnims = [0,1,2,3].map(() => useRef(new Animated.Value(0)).current);
+  const iconScales = [0,1,2,3].map(() => useRef(new Animated.Value(1)).current);
+
+  useEffect(() => {
+    // Glow pulsant
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, { toValue: 1,   duration: 2000, useNativeDriver: true }),
+        Animated.timing(glowAnim, { toValue: 0.4, duration: 2000, useNativeDriver: true }),
+      ])
+    ).start();
+
+    // Entrée
+    Animated.parallel([
+      Animated.timing(fadeAnim,  { toValue: 1, duration: 800, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 800, useNativeDriver: true }),
+      Animated.spring(avatarScale, { toValue: 1, friction: 5, tension: 80, useNativeDriver: true }),
+    ]).start(() => {
+      Animated.stagger(120, iconAnims.map(anim =>
+        Animated.spring(anim, { toValue: 1, friction: 5, tension: 80, useNativeDriver: true })
+      )).start();
+      Animated.spring(buttonAnim, { toValue: 1, friction: 6, tension: 60, useNativeDriver: true }).start();
+    });
+  }, []);
+
+  const icons = [
+    { name: 'logo-instagram' },
+    { name: 'logo-facebook'  },
+    { name: 'logo-linkedin'  },
+    { name: 'logo-github'    },
+  ];
+
   return (
-    <View style={styles.body}>
-      <View style={styles.container}>
-        <View style={styles.containerImage}>
+    <Animated.View style={[styles.body, { opacity: fadeAnim }]}>
+
+      {/* Gradient radial background */}
+      <LinearGradient
+        colors={[`${ACCENT}22`, `${ACCENT}08`, BG]}
+        start={{ x: 0.5, y: 0.2 }}
+        end={{ x: 0.5, y: 1 }}
+        style={StyleSheet.absoluteFillObject}
+      />
+
+      {/* Glow derrière avatar */}
+      <Animated.View style={[styles.glowCircle, { opacity: glowAnim }]} />
+
+      <Animated.View style={[
+        styles.container,
+        { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
+      ]}>
+
+        {/* Avatar */}
+        <Animated.View style={[
+          styles.containerImage,
+          { transform: [{ scale: avatarScale }] }
+        ]}>
+          {/* Anneau gradient */}
+          <LinearGradient
+            colors={[ACCENT, `${ACCENT}44`, 'transparent']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.avatarRing}
+          />
           <Image source={Avatar} style={styles.avatar} />
-        </View>
+        </Animated.View>
+
         <View style={styles.containerText}>
+
           <Text style={styles.hi}>
-            Razakasoa{'\n'}Tanjon'ny Avo Nekena
+            Razakasoa{'\n'}
+            <Text style={styles.name}>Tanjon'ny Avo Nekena</Text>
           </Text>
 
+          {/* Ligne déco */}
+          <View style={styles.line} />
+
+          {/* Icônes */}
           <View style={styles.socialContainer}>
-            <TouchableOpacity style={styles.socialButton}>
-              <Ionicons name="logo-instagram" size={22} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Ionicons name="logo-facebook" size={22} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Ionicons name="logo-linkedin" size={22} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Ionicons name="logo-github" size={22} color="white" />
-            </TouchableOpacity>
+            {icons.map((icon, index) => (
+              <Animated.View key={index} style={{
+                opacity: iconAnims[index],
+                transform: [{ scale: Animated.multiply(iconAnims[index], iconScales[index]) }],
+              }}>
+                <TouchableOpacity
+                  style={styles.socialButton}
+                  onPressIn={() => Animated.spring(iconScales[index], { toValue: 0.85, useNativeDriver: true }).start()}
+                  onPressOut={() => Animated.spring(iconScales[index], { toValue: 1, friction: 3, useNativeDriver: true }).start()}
+                  activeOpacity={1}
+                >
+                  <Ionicons name={icon.name as any} size={20} color={ACCENT} />
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/home")}>
-            <Text style={styles.buttonText}>See my Portfolio</Text>
-          </TouchableOpacity>
+          {/* Bouton gradient */}
+          <Animated.View style={{
+            opacity: buttonAnim,
+            transform: [
+              { translateY: buttonAnim.interpolate({ inputRange: [0, 1], outputRange: [30, 0] }) },
+              { scale: buttonScale },
+            ],
+          }}>
+            <TouchableOpacity
+              onPressIn={() => Animated.spring(buttonScale, { toValue: 0.93, useNativeDriver: true }).start()}
+              onPressOut={() => Animated.spring(buttonScale, { toValue: 1, friction: 3, useNativeDriver: true }).start()}
+              onPress={() => router.push('/(tabs)/home')}
+              activeOpacity={1}
+            >
+              <LinearGradient
+                colors={[ACCENT, '#3b82f6']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>See my Portfolio</Text>
+                <Ionicons name="arrow-forward" size={15} color="white" style={{ marginLeft: 8 }} />
+              </LinearGradient>
+            </TouchableOpacity>
+          </Animated.View>
+
         </View>
-      </View>
-    </View>
+      </Animated.View>
+    </Animated.View>
   );
-}
+};
+
+const AVATAR_SIZE = width > 600 ? 200 : 150;
 
 const styles = StyleSheet.create({
   body: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#0d2621',
+    backgroundColor: "black",
   },
+
+  // Glow
+  glowCircle: {
+    position: 'absolute',
+    width: AVATAR_SIZE + 140,
+    height: AVATAR_SIZE + 140,
+    borderRadius: (AVATAR_SIZE + 140) / 2,
+    backgroundColor: `${ACCENT}18`,
+    zIndex: 0,
+  },
+
+  // Carte
   container: {
     width: width > 600 ? '40%' : '85%',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#0d2621',
-    backgroundColor: 'white',
+    backgroundColor: `${BG}ee`,
     borderRadius: 40,
     paddingVertical: 40,
     paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: `${ACCENT}22`,
+    shadowColor: ACCENT,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+    elevation: 10,
   },
+
+  // Avatar
   containerImage: {
     marginBottom: 20,
-    borderRadius: 120,
-    borderWidth: 2,
-    borderColor: '#0d2621',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    elevation: 4,
-    backgroundColor: '#0d2621',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarRing: {
+    position: 'absolute',
+    width: AVATAR_SIZE + 10,
+    height: AVATAR_SIZE + 10,
+    borderRadius: (AVATAR_SIZE + 10) / 2,
   },
   avatar: {
-    width: width > 600 ? 200 : 150,
-    height: width > 600 ? 200 : 150,
-    borderRadius: width > 600 ? 100 : 75,
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    borderRadius: AVATAR_SIZE / 2,
+    borderWidth: 2,
+    borderColor: `${ACCENT}66`,
   },
+
+  // Texte
   containerText: {
     alignItems: 'center',
   },
   hi: {
-    fontSize: width > 600 ? 27 : 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontSize: width > 600 ? 18 : 15,
     textAlign: 'center',
+    marginBottom: 6,
+    color: 'rgba(255,255,255,0.5)',
   },
+  name: {
+    fontSize: width > 600 ? 26 : 21,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  line: {
+    width: 36,
+    height: 2,
+    backgroundColor: ACCENT,
+    opacity: 0.6,
+    marginVertical: 14,
+  },
+
+  // Socials
   socialContainer: {
     flexDirection: 'row',
     gap: 12,
@@ -97,31 +238,27 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 100,
-    backgroundColor: '#0d2621',
+    borderWidth: 1,
+    borderColor: `${ACCENT}44`,
+    backgroundColor: `${ACCENT}11`,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 4,
   },
+
+  // Bouton
   button: {
-    backgroundColor: '#0d2621',
-    paddingVertical: 12,
-    paddingHorizontal: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 13,
+    paddingHorizontal: 28,
     borderRadius: 25,
-    marginTop: 10,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    elevation: 4,
+    marginTop: 6,
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
+    letterSpacing: 0.3,
   },
 });
 
