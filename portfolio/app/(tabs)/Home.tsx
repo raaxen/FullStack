@@ -165,7 +165,7 @@ const Home = () => {
           styles.textBlock,
           { opacity: textFade, transform: [{ translateY: textSlide }] }
         ]}>
-          <Text style={styles.tag}>✦  FULL-STACK DEVELOPER</Text>
+          <Text style={styles.tag}>✦  FRONTEND REACT DEVELOPER</Text>
 
           <Text style={styles.firstName}>Tanjon'ny Avo</Text>
           <Text style={styles.lastName}>Nekena</Text>
@@ -194,14 +194,12 @@ const Home = () => {
               </Animated.View>
             ))}
           </View>
-
-          {/* Boutons */}
           <View style={styles.btnRow}>
             <Animated.View style={{ transform: [{ scale: btnScale }] }}>
               <TouchableOpacity
                 onPressIn={() => Animated.spring(btnScale, { toValue: 0.95, useNativeDriver: true }).start()}
                 onPressOut={() => Animated.spring(btnScale, { toValue: 1, friction: 3, useNativeDriver: true }).start()}
-                onPress={() => router.push('/(tabs)/project' as any)}
+                onPress={() => router.push('/(tabs)/about' as any)}
                 activeOpacity={1}
               >
                 <LinearGradient
@@ -210,21 +208,12 @@ const Home = () => {
                   end={{ x: 1, y: 0 }}
                   style={styles.btnPrimary}
                 >
-                  <Text style={styles.btnPrimaryText}>See Portfolio</Text>
-                  <Ionicons name="arrow-forward" size={15} color="white" style={{ marginLeft: 6 }} />
+                  <Text style={styles.btnPrimaryText} onPress = {() => router.push('/(tabs)/about' as any)}>Continue</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </Animated.View>
-
-            <TouchableOpacity
-              style={styles.btnSecondary}
-              onPress={() => router.push('/(tabs)/contact' as any)}
-            >
-              <Text style={styles.btnSecondaryText}>Contact</Text>
-            </TouchableOpacity>
           </View>
         </Animated.View>
-
       </ScrollView>
     </View>
   );
@@ -238,7 +227,6 @@ const styles = StyleSheet.create({
     backgroundColor: BG,
   },
 
-  // Glow derrière avatar
   glowCircle: {
     position: 'absolute',
     width: AVATAR_SIZE + 120,
@@ -250,7 +238,6 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
 
-  // Navbar
   nav: {
     position: 'absolute',
     top: 0, left: 0, right: 0,
@@ -279,13 +266,13 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
 
-  // Overlay & Drawer
   overlay: {
     position: 'absolute',
     top: 0, left: 0, right: 0, bottom: 0,
     backgroundColor: 'black',
     zIndex: 20,
   },
+
   drawer: {
     position: 'absolute',
     top: 0, left: 0,
@@ -295,6 +282,7 @@ const styles = StyleSheet.create({
     paddingTop: 60, paddingHorizontal: 24,
     elevation: 20,
   },
+
   drawerHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -304,6 +292,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'rgba(255,255,255,0.08)',
     paddingBottom: 16,
   },
+
   drawerTitle: { color: 'white', fontSize: 20, fontWeight: '700' },
   drawerLink: {
     flexDirection: 'row',
@@ -314,7 +303,6 @@ const styles = StyleSheet.create({
   },
   drawerText: { color: 'white', fontSize: 16, fontWeight: '500' },
 
-  // Scroll
   scroll: {
     flexGrow: 1,
     alignItems: 'center',
@@ -323,7 +311,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: isMobile ? 24 : 80,
   },
 
-  // Avatar
   avatarWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -349,7 +336,6 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
 
-  // Texte
   textBlock: {
     width: '100%',
     maxWidth: 520,
@@ -391,7 +377,6 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
 
-  // Socials
   socialRow: {
     flexDirection: 'row',
     gap: 10,
@@ -407,7 +392,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  // Boutons
   btnRow: {
     flexDirection: 'row',
     gap: 12,
